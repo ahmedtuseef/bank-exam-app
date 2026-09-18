@@ -69,7 +69,11 @@
       if (res.ok && data.reply) {
         addMsg(data.reply, "bot");
       } else {
-        addMsg("⚠️ " + (data.error || "Kuch gadbad ho gayi. Thodi der baad try karo."), "bot");
+        addMsg(
+          "⚠️ " +
+            (data.error || "Kuch gadbad ho gayi. Thodi der baad try karo."),
+          "bot",
+        );
       }
     } catch {
       typing.remove();

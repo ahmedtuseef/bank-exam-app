@@ -14,12 +14,18 @@ Keep it concise and easy to follow.`;
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method not allowed" }),
+    };
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: "Server is missing GEMINI_API_KEY" }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Server is missing GEMINI_API_KEY" }),
+    };
   }
 
   let message = "";
@@ -27,10 +33,16 @@ exports.handler = async (event) => {
     const parsed = JSON.parse(event.body || "{}");
     message = String(parsed.message || "").slice(0, 4000);
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body" }) };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Invalid request body" }),
+    };
   }
   if (!message.trim()) {
-    return { statusCode: 400, body: JSON.stringify({ error: "Please type a question" }) };
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Please type a question" }),
+    };
   }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
@@ -48,13 +60,18 @@ exports.handler = async (event) => {
 
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 300);
-      return { statusCode: 502, body: JSON.stringify({ error: "AI service error", detail }) };
+      return {
+        statusCode: 502,
+        body: JSON.stringify({ error: "AI service error", detail }),
+      };
     }
 
     const data = await res.json();
     const reply =
-      data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("").trim() ||
-      "Sorry, I couldn't generate an answer. Please try again.";
+      data?.candidates?.[0]?.content?.parts
+        ?.map((p) => p.text)
+        .join("")
+        .trim() || "Sorry, I couldn't generate an answer. Please try again.";
 
     return {
       statusCode: 200,
@@ -62,6 +79,9 @@ exports.handler = async (event) => {
       body: JSON.stringify({ reply }),
     };
   } catch {
-    return { statusCode: 500, body: JSON.stringify({ error: "Request failed, please try again" }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Request failed, please try again" }),
+    };
   }
 };

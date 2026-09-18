@@ -580,6 +580,11 @@ select {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   z-index: 1001;
 }
+/* The [hidden] attribute must win over display:flex above. */
+.chat-panel[hidden],
+.chat-fab[hidden] {
+  display: none;
+}
 
 .chat-header {
   display: flex;
