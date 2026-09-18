@@ -9,6 +9,9 @@
   --green: #22c55e;
   --red: #ef4444;
   --amber: #f59e0b;
+  --opt-bg: #334a68;
+  --opt-bg-hover: #3d5678;
+  --opt-border: #46618a;
   --radius: 16px;
 }
 
@@ -20,6 +23,9 @@ body.light {
   --muted: #64748b;
   --primary: #6366f1;
   --primary-2: #4f46e5;
+  --opt-bg: #f8fafc;
+  --opt-bg-hover: #eef2f7;
+  --opt-border: #cbd5e1;
 }
 body.light {
   background: radial-gradient(1200px 600px at 50% -10%, #e0e7ff, var(--bg));
@@ -232,12 +238,14 @@ select {
   gap: 10px;
 }
 .opt {
-  background: var(--card2);
-  border: 2px solid transparent;
+  background: var(--opt-bg);
+  border: 2px solid var(--opt-border);
   border-radius: 12px;
   padding: 14px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
   text-align: left;
   transition: 0.15s;
   display: flex;
@@ -246,11 +254,13 @@ select {
 }
 .opt:hover:not(.locked) {
   border-color: var(--primary);
+  background: var(--opt-bg-hover);
 }
 .opt .key {
-  background: var(--bg);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
   border-radius: 8px;
-  padding: 2px 9px;
+  padding: 3px 10px;
   font-size: 13px;
   font-weight: 700;
 }
