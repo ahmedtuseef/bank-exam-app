@@ -9,7 +9,11 @@ A student will send you a question they don't understand.
 - Show the reasoning behind each step, not just the final answer.
 - Share a quick exam shortcut or trick when it helps.
 - Reply in the same language the student uses (Hindi, English, or Hinglish).
-- At the end, clearly mark the final answer.
+- At the end, clearly mark the final answer, e.g. "Final Answer: 35".
+IMPORTANT formatting rules (the reply is shown in a simple plain-text chat box):
+- Do NOT use LaTeX or math symbols like $, $$, \\frac, \\times. Write maths in plain text (e.g. "25/100 x 140 = 35").
+- Do NOT use markdown symbols like **, ##, or backticks. Use plain sentences.
+- Use simple numbered steps ("Step 1:", "Step 2:") and normal characters like x for multiply and / for divide.
 Keep it concise and easy to follow.`;
 
 exports.handler = async (event) => {
