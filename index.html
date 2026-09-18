@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RRB Prelims Practice — Maths & Reasoning</title>
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ================= DASHBOARD ================= -->
+    <section id="dashboard" class="screen active">
+      <div class="top-controls">
+        <button id="themeBtn" class="icon-btn" title="Toggle theme">🌙</button>
+        <button id="soundBtn" class="icon-btn" title="Toggle sound">🔊</button>
+      </div>
+      <header class="hero">
+        <h1>🏦 RRB Office Assistant</h1>
+        <p>Prep companion · Maths + Reasoning</p>
+      </header>
+      <div class="dash-grid">
+        <button id="goPractice" class="dash-card">
+          <span class="dash-emoji">📚</span>
+          <span class="dash-title">Practice</span>
+          <span class="dash-sub">Topic-wise practice with instant answers, explanations & tricks</span>
+        </button>
+        <button id="goExam" class="dash-card exam">
+          <span class="dash-emoji">📝</span>
+          <span class="dash-title">Exam</span>
+          <span class="dash-sub">Full mock · 80 Q · 45 min · negative marking (real exam feel)</span>
+        </button>
+        <button id="goFormulas" class="dash-card">
+          <span class="dash-emoji">📖</span>
+          <span class="dash-title">Formulas & Tricks</span>
+          <span class="dash-sub">Quick revision sheet of all key formulas and shortcuts</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>📈 Your Progress</h2>
+        <div class="result-stats">
+          <div><b id="statTests">0</b><span>Tests</span></div>
+          <div><b id="statBest">0%</b><span>Best</span></div>
+          <div><b id="statAvg">0%</b><span>Average</span></div>
+          <div><b id="statStreak">0🔥</b><span>Streak</span></div>
+        </div>
+        <button id="reviseBtn" class="btn primary" disabled>📌 Revise Mistakes (0)</button>
+      </div>
+
+      <button id="installBtn" class="btn primary" hidden>📲 Install App on Phone</button>
+    </section>
+
+    <!-- ================= FORMULAS SCREEN ================= -->
+    <section id="formulas" class="screen">
+      <div class="topbar">
+        <button id="backFromFormulas" class="btn back">← Back</button>
+      </div>
+      <header class="hero">
+        <h1>📖 Formulas & Tricks</h1>
+        <p>Revise these before every mock</p>
+      </header>
+      <div id="formulaContent"></div>
+    </section>
+
+    <!-- ================= HOME (PRACTICE) SCREEN ================= -->
+    <section id="home" class="screen">
+      <div class="topbar">
+        <button id="backFromHome" class="btn back">← Back</button>
+      </div>
+      <header class="hero">
+        <h1>📚 Practice Mode</h1>
+        <p>Maths + Reasoning · Timed · Instant score</p>
+      </header>
+
+      <div class="card">
+        <h2>Choose Topics</h2>
+        <p class="hint">Tap the topics you want (they turn highlighted). Only selected topics will appear in the quiz.</p>
+        <div class="topic-controls">
+          <button id="selectAllBtn" class="btn mini">Select All</button>
+          <button id="clearAllBtn" class="btn mini ghost">Clear</button>
+        </div>
+        <div id="topicGrid" class="topic-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2>Settings</h2>
+        <label class="row">
+          <span>Number of questions</span>
+          <select id="qCount">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </label>
+        <label class="row">
+          <span>Time per question</span>
+          <select id="perQTime">
+            <option value="30">30 sec</option>
+            <option value="45" selected>45 sec</option>
+            <option value="60">60 sec</option>
+            <option value="0">No timer</option>
+          </select>
+        </label>
+        <button id="startBtn" class="btn primary">Start Quiz ▶</button>
+      </div>
+
+      <div class="card">
+        <h2>⚡ Fast Math Drill</h2>
+        <p class="hint">
+          Solve as many multiply/divide questions as you can within the time. Build your speed!
+        </p>
+        <label class="row">
+          <span>Type</span>
+          <select id="drillType">
+            <option value="mix" selected>Mix (× and ÷)</option>
+            <option value="mul">Multiply × only</option>
+            <option value="div">Divide ÷ only</option>
+          </select>
+        </label>
+        <label class="row">
+          <span>Duration</span>
+          <select id="drillTime">
+            <option value="60" selected>60 sec</option>
+            <option value="90">90 sec</option>
+            <option value="120">2 min</option>
+          </select>
+        </label>
+        <button id="drillBtn" class="btn primary">Start Drill ⚡</button>
+      </div>
+    </section>
+
+    <!-- ================= QUIZ SCREEN ================= -->
+    <section id="quiz" class="screen">
+      <div class="quiz-top">
+        <div class="pill" id="progressPill">Q 1 / 10</div>
+        <div class="pill timer" id="timerPill">⏱ 45</div>
+        <div class="pill score" id="scorePill">✅ 0</div>
+      </div>
+
+      <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+
+      <div class="card question-card">
+        <div class="q-topic" id="qTopic">Simplification</div>
+        <div class="q-text" id="qText">Question here</div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <button id="explainBtn" class="btn explain-btn" hidden>💡 Explain</button>
+        <div class="explain-box" id="explainBox" hidden></div>
+      </div>
+
+      <div class="quiz-actions">
+        <button id="quitBtn" class="btn ghost">Quit</button>
+        <button id="prevBtn" class="btn ghost" hidden>◀ Prev</button>
+        <button id="nextBtn" class="btn primary" disabled>Next ▶</button>
+      </div>
+    </section>
+
+    <!-- ================= RESULT SCREEN ================= -->
+    <section id="result" class="screen">
+      <div class="card result-card">
+        <h1 id="resultEmoji">🎉</h1>
+        <h2 id="resultScore">0 / 10</h2>
+        <p id="resultMsg">Great job!</p>
+        <div class="result-stats">
+          <div><b id="statCorrect">0</b><span>Correct</span></div>
+          <div><b id="statWrong">0</b><span>Wrong</span></div>
+          <div><b id="statPct">0%</b><span>Accuracy</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Review</h2>
+        <div id="review"></div>
+      </div>
+      <div class="quiz-actions">
+        <button id="resultHomeBtn" class="btn ghost">🏠 Home</button>
+        <button id="againBtn" class="btn primary">🔁 Try Again</button>
+      </div>
+    </section>
+
+    <!-- ================= DRILL SCREEN ================= -->
+    <section id="drill" class="screen">
+      <div class="quiz-top">
+        <div class="pill timer" id="drillTimer">⏱ 60</div>
+        <div class="pill score" id="drillScore">✅ 0</div>
+      </div>
+      <div class="card question-card drill-card">
+        <div class="q-topic">⚡ Fast Math Drill</div>
+        <div class="q-text drill-q" id="drillQ">12 × 8 = ?</div>
+        <div class="options" id="drillOptions"></div>
+        <div class="feedback" id="drillFeedback"></div>
+      </div>
+      <button id="drillQuitBtn" class="btn ghost">Stop</button>
+    </section>
+
+    <!-- ================= DRILL RESULT ================= -->
+    <section id="drillResult" class="screen">
+      <div class="card result-card">
+        <h1 id="drillEmoji">⚡</h1>
+        <h2 id="drillFinalScore">0 solved</h2>
+        <p id="drillMsg">Your speed is improving!</p>
+        <div class="result-stats">
+          <div><b id="drillCorrect">0</b><span>Correct</span></div>
+          <div><b id="drillWrong">0</b><span>Wrong</span></div>
+          <div><b id="drillSpeed">0</b><span>Per min</span></div>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button id="drillHomeBtn" class="btn ghost">🏠 Home</button>
+        <button id="drillAgainBtn" class="btn primary">🔁 Drill Again</button>
+      </div>
+    </section>
+
+    <!-- ================= EXAM INTRO ================= -->
+    <section id="examIntro" class="screen">
+      <div class="topbar">
+        <button id="backFromExam" class="btn back">← Back</button>
+      </div>
+      <header class="hero">
+        <h1>📝 Full Mock Exam</h1>
+        <p>RRB Office Assistant · Prelims pattern</p>
+      </header>
+      <div class="card">
+        <h2>Exam Pattern</h2>
+        <table class="exam-table">
+          <tr><td>🧠 Reasoning Ability</td><td>40 Q</td><td>40 marks</td></tr>
+          <tr><td>🔢 Numerical Ability</td><td>40 Q</td><td>40 marks</td></tr>
+          <tr><td><b>Total</b></td><td><b>80 Q</b></td><td><b>45 min</b></td></tr>
+        </table>
+        <ul class="exam-notes">
+          <li>⏱️ Single 45-minute timer for the whole paper.</li>
+          <li>❌ Negative marking: <b>0.25</b> for each wrong answer.</li>
+          <li>⏭️ You can skip questions and move freely with Next.</li>
+          <li>📊 Full score + section-wise breakdown at the end.</li>
+        </ul>
+        <button id="startExamBtn" class="btn primary">Start Exam ▶</button>
+      </div>
+    </section>
+
+    <!-- ================= EXAM RESULT ================= -->
+    <section id="examResult" class="screen">
+      <div class="card result-card">
+        <h1 id="examEmoji">📄</h1>
+        <h2 id="examScore">0 / 80</h2>
+        <p id="examMsg">Well attempted!</p>
+        <div class="result-stats">
+          <div><b id="examAttempted">0</b><span>Attempted</span></div>
+          <div><b id="examCorrect">0</b><span>Correct</span></div>
+          <div><b id="examWrong">0</b><span>Wrong</span></div>
+        </div>
+        <div class="result-stats">
+          <div><b id="examNeg">−0</b><span>Negative</span></div>
+          <div><b id="examNumerical">0 / 40</b><span>Numerical</span></div>
+          <div><b id="examReasoning">0 / 40</b><span>Reasoning</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Review</h2>
+        <div id="examReview"></div>
+      </div>
+      <button id="examAgainBtn" class="btn primary">🏠 Back to Dashboard</button>
+    </section>
+  </div>
+
+  <!-- ================= AI TUTOR CHATBOT ================= -->
+  <button id="chatFab" class="chat-fab" title="Ask AI Tutor" aria-label="Ask AI Tutor">💬</button>
+  <div id="chatPanel" class="chat-panel" hidden>
+    <div class="chat-header">
+      <span>🤖 AI Tutor</span>
+      <button id="chatClose" class="chat-close" aria-label="Close chat">✕</button>
+    </div>
+    <div id="chatBody" class="chat-body">
+      <div class="chat-msg bot">Hi! 👋 Koi bhi question jo samajh na aaye, yaha type karo — main step by step samjha dunga.</div>
+    </div>
+    <form id="chatForm" class="chat-input">
+      <textarea id="chatText" rows="1" placeholder="Apna question yaha likho..." autocomplete="off"></textarea>
+      <button type="submit" id="chatSend" class="chat-send" aria-label="Send">➤</button>
+    </form>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="generators.js"></script>
+  <script src="app.js"></script>
+  <script src="chat.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
