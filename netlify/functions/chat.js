@@ -1,7 +1,7 @@
 // Netlify serverless function: AI tutor for the RRB Office Assistant app.
 // The Gemini API key is read from the GEMINI_API_KEY environment variable,
 // so it is never exposed to the browser or committed to Git.
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-3.6-flash";
 
 const SYSTEM_PROMPT = `You are a friendly, patient tutor for the RRB Office Assistant exam (Numerical Ability + Reasoning).
 A student will send you a question they don't understand.
