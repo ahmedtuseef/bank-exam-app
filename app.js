@@ -36,6 +36,7 @@ const REASONING_TOPICS = [
 ];
 // Mains prep (General Awareness) \u2014 static banks, not part of the Prelims mock.
 const GA_TOPICS = ["Computer Awareness", "Banking Awareness"];
+const ENGLISH_TOPICS = ["Grammar", "Vocabulary"];
 
 // ===== Persistent storage (localStorage) =====
 const STORE_KEY = "rrb_prep_store";
@@ -309,6 +310,7 @@ function buildTopics() {
   section("🔢 Numerical Ability (Maths)", NUMERICAL_TOPICS);
   section("🧠 Reasoning", REASONING_TOPICS);
   section("🖥️ General Awareness (Mains)", GA_TOPICS);
+  section("📝 English (Mains)", ENGLISH_TOPICS);
 }
 
 // Select or clear all topic cards at once.

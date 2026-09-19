@@ -901,4 +901,117 @@ const QUESTION_BANK = {
       },
     ],
   },
+
+  Grammar: {
+    emoji: "✍️",
+    questions: [
+      {
+        q: "Choose the correct sentence:",
+        options: [
+          "He doesn't like tea",
+          "He don't like tea",
+          "He not like tea",
+          "He didn't likes tea",
+        ],
+        answer: 0,
+        sol: "3rd person singular → doesn't + base verb",
+      },
+      {
+        q: "She has lived here ___ 2015.",
+        options: ["since", "for", "from", "at"],
+        answer: 0,
+        sol: "'since' is used with a point of time",
+      },
+      {
+        q: "I am good ___ English.",
+        options: ["at", "in", "on", "with"],
+        answer: 0,
+        sol: "good at (skill)",
+      },
+      {
+        q: "One of my friends ___ a teacher.",
+        options: ["is", "are", "were", "have"],
+        answer: 0,
+        sol: "'One of...' takes singular verb 'is'",
+      },
+      {
+        q: "He is taller ___ me.",
+        options: ["than", "then", "from", "to"],
+        answer: 0,
+        sol: "Comparative uses 'than'",
+      },
+      {
+        q: "Plural of 'child' is:",
+        options: ["children", "childs", "childrens", "childes"],
+        answer: 0,
+        sol: "child → children",
+      },
+      {
+        q: "Past tense of 'buy' is:",
+        options: ["bought", "buyed", "buy", "boughted"],
+        answer: 0,
+        sol: "buy → bought",
+      },
+      {
+        q: "The train ___ at 5 PM daily.",
+        options: ["leaves", "leave", "left", "leaving"],
+        answer: 0,
+        sol: "Present simple for a schedule",
+      },
+    ],
+  },
+
+  Vocabulary: {
+    emoji: "📖",
+    questions: [
+      {
+        q: "Synonym of 'Happy':",
+        options: ["Joyful", "Sad", "Angry", "Tired"],
+        answer: 0,
+        sol: "Happy = Joyful",
+      },
+      {
+        q: "Antonym of 'Ancient':",
+        options: ["Modern", "Old", "Historic", "Aged"],
+        answer: 0,
+        sol: "Ancient ↔ Modern",
+      },
+      {
+        q: "Synonym of 'Brave':",
+        options: ["Courageous", "Coward", "Weak", "Fearful"],
+        answer: 0,
+        sol: "Brave = Courageous",
+      },
+      {
+        q: "Antonym of 'Victory':",
+        options: ["Defeat", "Win", "Success", "Triumph"],
+        answer: 0,
+        sol: "Victory ↔ Defeat",
+      },
+      {
+        q: "One word for 'a person who writes books':",
+        options: ["Author", "Reader", "Publisher", "Editor"],
+        answer: 0,
+        sol: "Writer of books = Author",
+      },
+      {
+        q: "Synonym of 'Big':",
+        options: ["Large", "Tiny", "Small", "Short"],
+        answer: 0,
+        sol: "Big = Large",
+      },
+      {
+        q: "Antonym of 'Increase':",
+        options: ["Decrease", "Rise", "Grow", "Expand"],
+        answer: 0,
+        sol: "Increase ↔ Decrease",
+      },
+      {
+        q: "One word for 'a place where books are kept':",
+        options: ["Library", "Museum", "Studio", "Gallery"],
+        answer: 0,
+        sol: "Books kept = Library",
+      },
+    ],
+  },
 };
