@@ -719,6 +719,56 @@ function toggleSound() {
   applySoundIcon();
   if (prefs.sound) beep(true);
 }
+
+// ===== Daily reminder (notifications) =====
+function updateReminderIcon() {
+  const btn = $("reminderBtn");
+  if (!btn) return;
+  const on = localStorage.getItem("rrb_reminder") === "on";
+  btn.textContent = on ? "\ud83d\udd14" : "\ud83d\udd15";
+  btn.classList.toggle("active", on);
+}
+function toggleReminder() {
+  if (localStorage.getItem("rrb_reminder") === "on") {
+    localStorage.setItem("rrb_reminder", "off");
+    updateReminderIcon();
+    return;
+  }
+  if (!("Notification" in window)) {
+    alert("Aapka browser notifications support nahi karta.");
+    return;
+  }
+  Notification.requestPermission().then((perm) => {
+    if (perm === "granted") {
+      localStorage.setItem("rrb_reminder", "on");
+      updateReminderIcon();
+      new Notification("RRB Office Assistant", {
+        body: "Reminder on! Roz practice ki yaad dila denge \ud83d\udcda",
+        icon: "icon.svg",
+      });
+    } else {
+      alert(
+        "Notification permission nahi mili. Browser settings se allow karo.",
+      );
+    }
+  });
+}
+// On open, if reminder is on and no practice done today, nudge the user.
+function maybeRemind() {
+  if (localStorage.getItem("rrb_reminder") !== "on") return;
+  if (!("Notification" in window) || Notification.permission !== "granted")
+    return;
+  const s = loadStore();
+  const done = s.daily && s.daily.date === todayStr() ? s.daily.count : 0;
+  if (done === 0) {
+    setTimeout(() => {
+      new Notification("RRB practice pending! \ud83c\udfaf", {
+        body: "Aaj ka goal shuru karo \u2014 20 questions solve karo!",
+        icon: "icon.svg",
+      });
+    }, 4000);
+  }
+}
 // Short beep using Web Audio (no files needed).
 let audioCtx = null;
 function beep(correct) {
@@ -806,6 +856,59 @@ const FORMULA_SHEET = [
       "Division = reverse multiply ('what × 120 = 1440?')",
       "Break multiply: 12×18 = 12×10 + 12×8",
       "Memorise tables 2–20 & squares up to 25",
+    ],
+  },
+  {
+    title: "📐 Squares & Cubes (memorise)",
+    rows: [
+      "Squares: 11²=121, 12²=144, 13²=169, 14²=196, 15²=225",
+      "16²=256, 17²=289, 18²=324, 19²=361, 20²=400",
+      "21²=441, 22²=484, 23²=529, 24²=576, 25²=625",
+      "Cubes: 6³=216, 7³=343, 8³=512, 9³=729, 12³=1728",
+    ],
+  },
+  {
+    title: "🔢 % ⇄ Fraction (fast %)",
+    rows: [
+      "50%=1/2, 33⅓%=1/3, 25%=1/4, 20%=1/5",
+      "16⅔%=1/6, 12.5%=1/8, 11⅑%=1/9, 10%=1/10",
+      "9 1/11%=1/11, 8⅓%=1/12, 6.25%=1/16",
+      "Use these to solve % questions in seconds",
+    ],
+  },
+  {
+    title: "🔁 Number Series patterns",
+    rows: [
+      "Check ratio (×2, ×3) or difference (+2,+4,+6…)",
+      "Squares/cubes: 1,4,9,16… or 1,8,27,64…",
+      "Prime series: 2,3,5,7,11,13…",
+      "Alternate series: two patterns mixed together",
+    ],
+  },
+  {
+    title: "🧩 Mensuration",
+    rows: [
+      "Rectangle: Area = l×b, Perimeter = 2(l+b)",
+      "Square: Area = a², Perimeter = 4a",
+      "Circle: Area = πr², Circumference = 2πr (π≈22/7)",
+      "Triangle: Area = ½ × base × height",
+    ],
+  },
+  {
+    title: "🤝 Partnership & Mixture",
+    rows: [
+      "Profit shared in ratio of (capital × time)",
+      "Alligation: (Dearer−Mean):(Mean−Cheaper)",
+      "Average speed (equal distance) = 2xy/(x+y)",
+    ],
+  },
+  {
+    title: "👨‍👩‍👧 Blood Relation & Inequality",
+    rows: [
+      "Draw a family tree; + male, − female",
+      "Father's/Mother's son = brother; daughter = sister",
+      "Inequality: A>B>C ⇒ A is greatest, C smallest",
+      "A≥B and B>C ⇒ A>C (strict wins)",
     ],
   },
 ];
@@ -930,9 +1033,12 @@ window.addEventListener("DOMContentLoaded", () => {
   renderStats();
   applyTheme();
   applySoundIcon();
+  updateReminderIcon();
+  maybeRemind();
   renderFormulas();
   $("themeBtn").onclick = toggleTheme;
   $("soundBtn").onclick = toggleSound;
+  if ($("reminderBtn")) $("reminderBtn").onclick = toggleReminder;
   // Dashboard navigation
   $("goPractice").onclick = () => showScreen("home");
   $("goExam").onclick = () => showScreen("examIntro");

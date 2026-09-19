@@ -466,6 +466,10 @@ select:focus {
   border-color: var(--primary);
   transform: translateY(-1px);
 }
+.icon-btn.active {
+  border-color: var(--amber);
+  color: var(--amber);
+}
 .bookmark-btn.active {
   color: var(--amber);
   border-color: var(--amber);
