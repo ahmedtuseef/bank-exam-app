@@ -1,11 +1,13 @@
 :root {
-  --bg: #0f172a;
+  --bg: #0b1120;
   --card: #1e293b;
   --card2: #273449;
   --text: #e2e8f0;
   --muted: #94a3b8;
   --primary: #6366f1;
   --primary-2: #818cf8;
+  --accent: #a855f7;
+  --accent-2: #ec4899;
   --green: #22c55e;
   --red: #ef4444;
   --amber: #f59e0b;
@@ -43,7 +45,12 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
-  background: radial-gradient(1200px 600px at 50% -10%, #1e293b, var(--bg));
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(99, 102, 241, 0.28), transparent 60%),
+    radial-gradient(800px 500px at 92% 0%, rgba(168, 85, 247, 0.2), transparent 55%),
+    radial-gradient(1000px 700px at 50% 118%, rgba(236, 72, 153, 0.14), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   padding: 20px;
@@ -78,8 +85,10 @@ body {
   margin-bottom: 20px;
 }
 .hero h1 {
-  font-size: 28px;
+  font-size: 30px;
   margin-bottom: 6px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
 }
 .hero p {
   color: var(--muted);
@@ -87,11 +96,14 @@ body {
 }
 
 .card {
-  background: var(--card);
-  border: 1px solid #334155;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(23, 32, 48, 0.8));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 16px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
 }
 .card h2 {
   font-size: 16px;
@@ -170,8 +182,9 @@ select {
   transition: 0.15s;
 }
 .btn.primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   color: white;
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.32);
 }
 .btn.primary:hover {
   filter: brightness(1.08);
@@ -412,28 +425,55 @@ select {
   gap: 14px;
 }
 .dash-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 10px;
   text-align: left;
-  background: var(--card);
-  border: 1px solid #334155;
+  background: linear-gradient(160deg, rgba(40, 52, 73, 0.95), rgba(23, 32, 48, 0.9));
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: var(--radius);
-  padding: 22px;
+  padding: 22px 22px 22px 26px;
   cursor: pointer;
   color: var(--text);
-  transition: 0.15s;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.dash-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
 }
 .dash-card:hover {
   border-color: var(--primary);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 34px rgba(99, 102, 241, 0.3);
 }
 .dash-card.exam {
-  background: linear-gradient(135deg, #1e1b4b, #273449);
+  background: linear-gradient(160deg, rgba(49, 27, 75, 0.95), rgba(23, 32, 48, 0.9));
+}
+.dash-card.exam::before {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
 }
 .dash-emoji {
-  font-size: 34px;
+  font-size: 30px;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(168, 85, 247, 0.28));
+  border: 1px solid rgba(148, 163, 184, 0.22);
 }
 .dash-title {
   font-size: 22px;
