@@ -290,6 +290,30 @@ function startExamTimer() {
   state.timer = setInterval(tick, 1000);
 }
 
+// Exam navigation grid: shows answered/current status, tap to jump.
+function renderPalette() {
+  const pal = $("examPalette");
+  if (!pal) return;
+  pal.hidden = false;
+  pal.innerHTML =
+    `<div class="palette-title">Question Palette \u2014 tap to jump</div><div class="palette-grid">` +
+    state.quiz
+      .map((_, i) => {
+        let cls = "pcell";
+        if (i === state.idx) cls += " current";
+        else if (state.answers[i]) cls += " done";
+        return `<button class="${cls}" data-i="${i}">${i + 1}</button>`;
+      })
+      .join("") +
+    `</div>`;
+  pal.querySelectorAll(".pcell").forEach((btn) => {
+    btn.onclick = () => {
+      state.idx = parseInt(btn.dataset.i, 10);
+      renderQuestion();
+    };
+  });
+}
+
 // ===== Render a question =====
 function renderQuestion() {
   state.locked = false;
@@ -340,10 +364,12 @@ function renderQuestion() {
     $("scorePill").textContent = `📝 ${attempted}/${total}`;
     $("nextBtn").textContent = state.idx === total - 1 ? "Submit ✅" : "Next ▶";
     $("prevBtn").hidden = state.idx === 0;
+    renderPalette();
     return;
   }
 
   $("prevBtn").hidden = true;
+  if ($("examPalette")) $("examPalette").hidden = true;
 
   // Practice: per-question timer
   clearInterval(state.timer);
@@ -385,6 +411,7 @@ function selectOption(chosen, el) {
     };
     const attempted = state.answers.filter(Boolean).length;
     $("scorePill").textContent = `📝 ${attempted}/${state.quiz.length}`;
+    renderPalette();
     return;
   }
 
