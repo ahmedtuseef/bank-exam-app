@@ -46,9 +46,21 @@ body {
     -apple-system,
     sans-serif;
   background:
-    radial-gradient(900px 500px at 12% -8%, rgba(99, 102, 241, 0.28), transparent 60%),
-    radial-gradient(800px 500px at 92% 0%, rgba(168, 85, 247, 0.2), transparent 55%),
-    radial-gradient(1000px 700px at 50% 118%, rgba(236, 72, 153, 0.14), transparent 60%),
+    radial-gradient(
+      900px 500px at 12% -8%,
+      rgba(99, 102, 241, 0.28),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 500px at 92% 0%,
+      rgba(168, 85, 247, 0.2),
+      transparent 55%
+    ),
+    radial-gradient(
+      1000px 700px at 50% 118%,
+      rgba(236, 72, 153, 0.14),
+      transparent 60%
+    ),
     var(--bg);
   background-attachment: fixed;
   color: var(--text);
@@ -96,7 +108,11 @@ body {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(23, 32, 48, 0.8));
+  background: linear-gradient(
+    180deg,
+    rgba(30, 41, 59, 0.92),
+    rgba(23, 32, 48, 0.8)
+  );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(148, 163, 184, 0.14);
@@ -431,7 +447,11 @@ select {
   align-items: flex-start;
   gap: 10px;
   text-align: left;
-  background: linear-gradient(160deg, rgba(40, 52, 73, 0.95), rgba(23, 32, 48, 0.9));
+  background: linear-gradient(
+    160deg,
+    rgba(40, 52, 73, 0.95),
+    rgba(23, 32, 48, 0.9)
+  );
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: var(--radius);
   padding: 22px 22px 22px 26px;
@@ -459,7 +479,11 @@ select {
   box-shadow: 0 16px 34px rgba(99, 102, 241, 0.3);
 }
 .dash-card.exam {
-  background: linear-gradient(160deg, rgba(49, 27, 75, 0.95), rgba(23, 32, 48, 0.9));
+  background: linear-gradient(
+    160deg,
+    rgba(49, 27, 75, 0.95),
+    rgba(23, 32, 48, 0.9)
+  );
 }
 .dash-card.exam::before {
   background: linear-gradient(180deg, var(--accent), var(--accent-2));
@@ -472,8 +496,38 @@ select {
   align-items: center;
   justify-content: center;
   border-radius: 15px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(168, 85, 247, 0.28));
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.28),
+    rgba(168, 85, 247, 0.28)
+  );
   border: 1px solid rgba(148, 163, 184, 0.22);
+}
+/* Distinct vibrant icon chips per dashboard card */
+#goPractice .dash-emoji {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.45);
+  border: none;
+}
+#goExam .dash-emoji {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  box-shadow: 0 6px 16px rgba(168, 85, 247, 0.45);
+  border: none;
+}
+#goFormulas .dash-emoji {
+  background: linear-gradient(135deg, #10b981, #22c55e);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
+  border: none;
+}
+#goPractice::before {
+  background: linear-gradient(180deg, #3b82f6, #06b6d4);
+}
+#goFormulas::before {
+  background: linear-gradient(180deg, #10b981, #22c55e);
+}
+.dash-title {
+  font-size: 22px;
+  font-weight: 800;
 }
 .dash-title {
   font-size: 22px;
