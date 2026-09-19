@@ -115,8 +115,9 @@ function showScreen(id) {
 function buildTopics() {
   const grid = $("topicGrid");
   grid.innerHTML = "";
-  Object.keys(QUESTION_BANK).forEach((topic) => {
+  const makeCard = (topic) => {
     const data = QUESTION_BANK[topic];
+    if (!data) return null;
     const el = document.createElement("div");
     el.className = "topic";
     el.dataset.topic = topic;
@@ -126,8 +127,23 @@ function buildTopics() {
       if (el.classList.contains("selected")) state.selectedTopics.add(topic);
       else state.selectedTopics.delete(topic);
     };
-    grid.appendChild(el);
-  });
+    return el;
+  };
+  const section = (title, topics) => {
+    const h = document.createElement("h3");
+    h.className = "topic-section";
+    h.textContent = title;
+    grid.appendChild(h);
+    const sub = document.createElement("div");
+    sub.className = "topic-grid";
+    topics.forEach((t) => {
+      const card = makeCard(t);
+      if (card) sub.appendChild(card);
+    });
+    grid.appendChild(sub);
+  };
+  section("🔢 Numerical Ability (Maths)", NUMERICAL_TOPICS);
+  section("🧠 Reasoning", REASONING_TOPICS);
 }
 
 // Select or clear all topic cards at once.

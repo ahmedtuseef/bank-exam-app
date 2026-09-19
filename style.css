@@ -104,6 +104,15 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
+.topic-section {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-2);
+  margin: 16px 0 10px;
+}
+.topic-section:first-child {
+  margin-top: 4px;
+}
 .topic {
   background: var(--card2);
   border: 2px solid transparent;
