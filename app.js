@@ -48,6 +48,8 @@ function loadStore() {
     s.bookmarks = s.bookmarks || [];
     s.daily = s.daily || { date: todayStr(), count: 0 };
     s.topicStats = s.topicStats || {};
+    s.xp = s.xp || 0;
+    s.badges = s.badges || [];
     return s;
   } catch {
     return { history: [], mistakes: [], streakDates: [], bookmarks: [] };
@@ -78,6 +80,78 @@ function updateTopicStats(answers) {
     if (a.ok) t.correct++;
   });
   saveStore(s);
+}
+
+// ===== Gamification: XP, levels, badges =====
+const BADGES = [
+  {
+    id: "first",
+    icon: "\ud83c\udfaf",
+    name: "First Step",
+    desc: "Pehla test complete",
+  },
+  {
+    id: "century",
+    icon: "\ud83d\udcaf",
+    name: "Centurion",
+    desc: "100 sahi answers",
+  },
+  {
+    id: "streak7",
+    icon: "\ud83d\udd25",
+    name: "On Fire",
+    desc: "7-day streak",
+  },
+  {
+    id: "perfect",
+    icon: "\ud83c\udf1f",
+    name: "Perfectionist",
+    desc: "Ek test mein 100%",
+  },
+  {
+    id: "level5",
+    icon: "\ud83d\ude80",
+    name: "Rising Star",
+    desc: "Level 5 tak pahunche",
+  },
+];
+function awardXp(n) {
+  const s = loadStore();
+  s.xp = (s.xp || 0) + n;
+  saveStore(s);
+}
+// Unlock milestone badges; alerts once for a newly earned badge.
+function checkBadges(perfect) {
+  const s = loadStore();
+  s.badges = s.badges || [];
+  const totalCorrect = Object.keys(s.topicStats || {}).reduce(
+    (a, t) => a + s.topicStats[t].correct,
+    0,
+  );
+  const level = Math.floor((s.xp || 0) / 100) + 1;
+  const newly = [];
+  const add = (id) => {
+    if (!s.badges.includes(id)) {
+      s.badges.push(id);
+      newly.push(id);
+    }
+  };
+  if (s.history.length >= 1) add("first");
+  if (totalCorrect >= 100) add("century");
+  if (currentStreak() >= 7) add("streak7");
+  if (perfect) add("perfect");
+  if (level >= 5) add("level5");
+  saveStore(s);
+  if (newly.length) {
+    const b = BADGES.find((x) => x.id === newly[0]);
+    setTimeout(
+      () =>
+        alert(
+          `\ud83c\udfc5 Naya Badge unlock! ${b.icon} ${b.name} \u2014 ${b.desc}`,
+        ),
+      400,
+    );
+  }
 }
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -586,6 +660,8 @@ function finishExam() {
   );
   addMistakes(wrongQs);
   updateTopicStats(state.answers);
+  awardXp(correct * 10);
+  checkBadges(correct === total);
   bumpDaily(attempted);
   renderStats();
 
@@ -683,6 +759,8 @@ function showResult() {
     );
     addMistakes(wrongQs);
     updateTopicStats(state.answers);
+    awardXp(correct * 10);
+    checkBadges(pct === 100);
   }
   bumpDaily(state.answers.filter(Boolean).length);
   renderStats();
@@ -940,6 +1018,22 @@ function renderStats() {
   }
   if ($("goalBar"))
     $("goalBar").style.width = `${Math.min(100, (dCount / goal) * 100)}%`;
+  const xp = s.xp || 0;
+  const level = Math.floor(xp / 100) + 1;
+  if ($("levelText")) $("levelText").textContent = `\u2b50 Level ${level}`;
+  if ($("xpText")) $("xpText").textContent = `${xp} XP`;
+  if ($("xpBar")) $("xpBar").style.width = `${xp % 100}%`;
+  if ($("badges")) {
+    const earned = BADGES.filter((b) => (s.badges || []).includes(b.id));
+    $("badges").innerHTML = earned.length
+      ? earned
+          .map(
+            (b) =>
+              `<span class="badge" title="${b.desc}">${b.icon} ${b.name}</span>`,
+          )
+          .join("")
+      : `<p class="hint">Tests do aur badges kamao! \ud83c\udfc5</p>`;
+  }
   const tests = s.history.length;
   const best = tests ? Math.max(...s.history.map((h) => h.pct)) : 0;
   const avg = tests

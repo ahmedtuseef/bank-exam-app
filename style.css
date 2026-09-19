@@ -824,6 +824,34 @@ select:focus {
   text-align: right;
   color: var(--amber);
 }
+.level-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.level-row #xpText {
+  color: var(--primary-2);
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25),
+    rgba(168, 85, 247, 0.25)
+  );
+  border: 1px solid rgba(129, 140, 248, 0.35);
+}
 
 /* ================= AI TUTOR CHATBOT ================= */
 .chat-fab {
