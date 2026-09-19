@@ -386,6 +386,59 @@ function buildQuiz(topicList, count) {
   return quiz;
 }
 
+// Build an original printable practice paper (opens a new tab; user saves as PDF).
+function generatePaperPDF() {
+  if (typeof setDifficulty === "function") setDifficulty("exam");
+  const numerical = buildQuiz(NUMERICAL_TOPICS, 40);
+  const reasoning = buildQuiz(REASONING_TOPICS, 40);
+  const all = [...numerical, ...reasoning];
+  const keys = ["A", "B", "C", "D"];
+  const esc = (s) =>
+    String(s).replace(
+      /[&<>]/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c],
+    );
+  const item = (q, i) =>
+    `<div class="pq"><div class="pq-num">Q${i + 1}. ${esc(q.q).replace(/\n/g, "<br>")}</div>` +
+    `<div class="pq-opts">${q.options.map((o, j) => `<span>(${keys[j]}) ${esc(o)}</span>`).join("")}</div></div>`;
+  const answerKey = all
+    .map((q, i) => `${i + 1}-${keys[q.answer]}`)
+    .join("&nbsp;&nbsp; ");
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert(
+      "Popup block ho gaya. Browser mein popups allow karo, phir dobara try karo.",
+    );
+    return;
+  }
+  win.document.write(
+    `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RRB Practice Paper</title><style>` +
+      `body{font-family:Arial,sans-serif;padding:24px;color:#111;max-width:800px;margin:auto;}` +
+      `h1{text-align:center;margin:0;}.sub{text-align:center;color:#555;margin:4px 0 16px;}` +
+      `.sec{font-weight:bold;background:#eee;padding:6px 10px;margin:16px 0 8px;border-radius:4px;}` +
+      `.pq{margin-bottom:12px;}.pq-num{font-weight:600;}.pq-opts{margin-left:22px;}` +
+      `.pq-opts span{display:inline-block;margin-right:20px;}` +
+      `.key{margin-top:24px;border-top:2px solid #333;padding-top:12px;font-size:13px;line-height:1.9;}` +
+      `@media print{.noprint{display:none;}}</style></head><body>` +
+      `<h1>RRB Office Assistant — Practice Paper</h1>` +
+      `<div class="sub">80 Questions · Numerical + Reasoning · Exam level</div>` +
+      `<button class="noprint" onclick="window.print()" style="padding:8px 16px;margin-bottom:14px;cursor:pointer;">🖨️ Print / Save as PDF</button>` +
+      `<div class="sec">Section A — Numerical Ability (Q1–Q40)</div>` +
+      all
+        .slice(0, 40)
+        .map((q, i) => item(q, i))
+        .join("") +
+      `<div class="sec">Section B — Reasoning Ability (Q41–Q80)</div>` +
+      all
+        .slice(40)
+        .map((q, i) => item(q, i + 40))
+        .join("") +
+      `<div class="key"><b>Answer Key:</b><br>${answerKey}</div>` +
+      `</body></html>`,
+  );
+  win.document.close();
+}
+
 // ===== Start full exam (RRB Office Assistant style) =====
 function startExam() {
   state.mode = "exam";
@@ -1188,6 +1241,7 @@ window.addEventListener("DOMContentLoaded", () => {
   $("backFromHome").onclick = () => showScreen("dashboard");
   $("backFromExam").onclick = () => showScreen("dashboard");
   $("startExamBtn").onclick = startExam;
+  if ($("paperBtn")) $("paperBtn").onclick = generatePaperPDF;
   $("examAgainBtn").onclick = () => showScreen("dashboard");
   if ($("shareResultBtn"))
     $("shareResultBtn").onclick = () => shareText(state.lastShare);
