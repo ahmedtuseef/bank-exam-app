@@ -45,6 +45,7 @@ function loadStore() {
     s.streakDates = s.streakDates || [];
     s.bookmarks = s.bookmarks || [];
     s.daily = s.daily || { date: todayStr(), count: 0 };
+    s.topicStats = s.topicStats || {};
     return s;
   } catch {
     return { history: [], mistakes: [], streakDates: [], bookmarks: [] };
@@ -59,6 +60,21 @@ function bumpDaily(n) {
   const today = todayStr();
   if (!s.daily || s.daily.date !== today) s.daily = { date: today, count: 0 };
   s.daily.count += n;
+  saveStore(s);
+}
+// Track attempts/correct per topic to find weak areas.
+function updateTopicStats(answers) {
+  const s = loadStore();
+  s.topicStats = s.topicStats || {};
+  answers.forEach((a) => {
+    if (!a || !a.topic) return;
+    const t = (s.topicStats[a.topic] = s.topicStats[a.topic] || {
+      attempted: 0,
+      correct: 0,
+    });
+    t.attempted++;
+    if (a.ok) t.correct++;
+  });
   saveStore(s);
 }
 function todayStr() {
@@ -566,6 +582,7 @@ function finishExam() {
     (q, i) => state.answers[i] && !state.answers[i].ok,
   );
   addMistakes(wrongQs);
+  updateTopicStats(state.answers);
   bumpDaily(attempted);
   renderStats();
 
@@ -662,6 +679,7 @@ function showResult() {
       (q, i) => state.answers[i] && !state.answers[i].ok,
     );
     addMistakes(wrongQs);
+    updateTopicStats(state.answers);
   }
   bumpDaily(state.answers.filter(Boolean).length);
   renderStats();
@@ -828,6 +846,30 @@ function renderStats() {
   const mCount = s.mistakes.length;
   $("reviseBtn").textContent = `\ud83d\udccc Revise Mistakes (${mCount})`;
   $("reviseBtn").disabled = mCount === 0;
+
+  if ($("weakTopics")) {
+    const ts = s.topicStats || {};
+    const rows = Object.keys(ts)
+      .map((t) => ({
+        t,
+        acc: Math.round((ts[t].correct / ts[t].attempted) * 100),
+        n: ts[t].attempted,
+      }))
+      .filter((r) => r.n >= 3)
+      .sort((a, b) => a.acc - b.acc)
+      .slice(0, 5);
+    if (!rows.length) {
+      $("weakTopics").innerHTML =
+        `<p class="hint">Kuch tests do \u2014 yaha aapke weak topics (kam accuracy wale) dikhenge.</p>`;
+    } else {
+      $("weakTopics").innerHTML = rows
+        .map(
+          (r) =>
+            `<div class="weak-row"><span class="weak-name">${r.t}</span><div class="weak-bar"><div class="weak-fill" style="width:${r.acc}%"></div></div><b class="weak-pct">${r.acc}%</b></div>`,
+        )
+        .join("");
+    }
+  }
 
   if ($("bookmarksBtn")) {
     const bCount = s.bookmarks.length;
