@@ -466,6 +466,10 @@ select:focus {
   border-color: var(--primary);
   transform: translateY(-1px);
 }
+.bookmark-btn.active {
+  color: var(--amber);
+  border-color: var(--amber);
+}
 
 /* Formula sheet */
 .formula-list {

@@ -39,15 +39,14 @@ const REASONING_TOPICS = [
 const STORE_KEY = "rrb_prep_store";
 function loadStore() {
   try {
-    return (
-      JSON.parse(localStorage.getItem(STORE_KEY)) || {
-        history: [],
-        mistakes: [],
-        streakDates: [],
-      }
-    );
+    const s = JSON.parse(localStorage.getItem(STORE_KEY)) || {};
+    s.history = s.history || [];
+    s.mistakes = s.mistakes || [];
+    s.streakDates = s.streakDates || [];
+    s.bookmarks = s.bookmarks || [];
+    return s;
   } catch {
-    return { history: [], mistakes: [], streakDates: [] };
+    return { history: [], mistakes: [], streakDates: [], bookmarks: [] };
   }
 }
 function saveStore(s) {
@@ -75,6 +74,22 @@ function addMistakes(list) {
   });
   if (s.mistakes.length > 200) s.mistakes = s.mistakes.slice(-200);
   saveStore(s);
+}
+
+// ===== Bookmarks =====
+function isBookmarked(qText) {
+  return loadStore().bookmarks.some((b) => b.q === qText);
+}
+// Toggle a question in bookmarks; returns true if it is now bookmarked.
+function toggleBookmark(q) {
+  const s = loadStore();
+  const idx = s.bookmarks.findIndex((b) => b.q === q.q);
+  if (idx >= 0) s.bookmarks.splice(idx, 1);
+  else s.bookmarks.push(q);
+  if (s.bookmarks.length > 200) s.bookmarks = s.bookmarks.slice(-200);
+  saveStore(s);
+  renderStats();
+  return idx < 0;
 }
 function currentStreak() {
   const s = loadStore();
@@ -293,6 +308,18 @@ function renderQuestion() {
   if ($("askAiBtn")) $("askAiBtn").hidden = true;
   $("explainBox").hidden = true;
   $("explainBox").innerHTML = "";
+
+  const bm = $("bookmarkBtn");
+  if (bm) {
+    const marked = isBookmarked(q.q);
+    bm.textContent = marked ? "\u2605" : "\u2606";
+    bm.classList.toggle("active", marked);
+    bm.onclick = () => {
+      const now = toggleBookmark(q);
+      bm.textContent = now ? "\u2605" : "\u2606";
+      bm.classList.toggle("active", now);
+    };
+  }
 
   const optBox = $("options");
   optBox.innerHTML = "";
@@ -754,6 +781,12 @@ function renderStats() {
   $("reviseBtn").textContent = `\ud83d\udccc Revise Mistakes (${mCount})`;
   $("reviseBtn").disabled = mCount === 0;
 
+  if ($("bookmarksBtn")) {
+    const bCount = s.bookmarks.length;
+    $("bookmarksBtn").textContent = `\u2b50 Bookmarked (${bCount})`;
+    $("bookmarksBtn").disabled = bCount === 0;
+  }
+
   const chart = $("progressChart");
   if (chart) {
     const recent = s.history.slice(-10);
@@ -787,6 +820,20 @@ function startRevise() {
   renderQuestion();
 }
 
+// Start a quiz built only from bookmarked questions.
+function startBookmarks() {
+  const s = loadStore();
+  if (!s.bookmarks.length) return;
+  state.mode = "revise";
+  state.perQTime = 0;
+  state.quiz = shuffle([...s.bookmarks]).slice(0, 20);
+  state.idx = 0;
+  state.score = 0;
+  state.answers = [];
+  showScreen("quiz");
+  renderQuestion();
+}
+
 // ===== Bindings =====
 window.addEventListener("DOMContentLoaded", () => {
   buildTopics();
@@ -802,6 +849,7 @@ window.addEventListener("DOMContentLoaded", () => {
   $("goFormulas").onclick = () => showScreen("formulas");
   $("backFromFormulas").onclick = () => showScreen("dashboard");
   $("reviseBtn").onclick = startRevise;
+  if ($("bookmarksBtn")) $("bookmarksBtn").onclick = startBookmarks;
   $("backFromHome").onclick = () => showScreen("dashboard");
   $("backFromExam").onclick = () => showScreen("dashboard");
   $("startExamBtn").onclick = startExam;

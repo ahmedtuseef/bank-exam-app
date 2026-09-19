@@ -549,10 +549,7 @@ const GENERATORS = {
     } while (mults.includes(odd) || odd % m === 0);
     const shown = [...mults, odd].sort(() => Math.random() - 0.5);
     const q = `Find the odd one out: ${shown.join(", ")}`;
-    const { options, answer } = makeOptions(
-      String(odd),
-      mults.map(String),
-    );
+    const { options, answer } = makeOptions(String(odd), mults.map(String));
     return {
       q,
       options,
