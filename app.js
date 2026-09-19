@@ -171,9 +171,30 @@ function addMistakes(list) {
   if (!list.length) return;
   const s = loadStore();
   list.forEach((q) => {
-    if (!s.mistakes.some((m) => m.q === q.q)) s.mistakes.push(q);
+    if (!s.mistakes.some((m) => m.q === q.q))
+      s.mistakes.push({ ...q, due: todayStr(), interval: 1 });
   });
   if (s.mistakes.length > 200) s.mistakes = s.mistakes.slice(-200);
+  saveStore(s);
+}
+// Spaced repetition: correct answers push the review further out; wrong resets it.
+function updateSpacedRepetition(answers) {
+  const s = loadStore();
+  answers.forEach((a) => {
+    if (!a) return;
+    const m = s.mistakes.find((x) => x.q === a.q);
+    if (!m) return;
+    if (a.ok) {
+      m.interval = Math.min((m.interval || 1) * 2, 14);
+      const d = new Date();
+      d.setDate(d.getDate() + m.interval);
+      m.due = d.toISOString().slice(0, 10);
+      if (m.interval >= 14) s.mistakes = s.mistakes.filter((x) => x.q !== a.q);
+    } else {
+      m.interval = 1;
+      m.due = todayStr();
+    }
+  });
   saveStore(s);
 }
 
@@ -243,6 +264,15 @@ function shareText(text) {
   } else {
     alert(text);
   }
+}
+
+// Read text aloud using the browser's speech synthesis.
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
 }
 
 // ===== Build topic grid =====
@@ -446,6 +476,7 @@ function renderQuestion() {
       bm.classList.toggle("active", now);
     };
   }
+  if ($("readBtn")) $("readBtn").onclick = () => speak(q.q);
 
   const optBox = $("options");
   optBox.innerHTML = "";
@@ -761,6 +792,8 @@ function showResult() {
     updateTopicStats(state.answers);
     awardXp(correct * 10);
     checkBadges(pct === 100);
+  } else {
+    updateSpacedRepetition(state.answers);
   }
   bumpDaily(state.answers.filter(Boolean).length);
   renderStats();
@@ -1044,7 +1077,11 @@ function renderStats() {
   $("statAvg").textContent = `${avg}%`;
   $("statStreak").textContent = `${currentStreak()}🔥`;
   const mCount = s.mistakes.length;
-  $("reviseBtn").textContent = `\ud83d\udccc Revise Mistakes (${mCount})`;
+  const dueCount = s.mistakes.filter(
+    (m) => !m.due || m.due <= todayStr(),
+  ).length;
+  $("reviseBtn").textContent =
+    `\ud83d\udccc Revise Mistakes (${dueCount} due / ${mCount})`;
   $("reviseBtn").disabled = mCount === 0;
 
   if ($("weakTopics")) {
@@ -1102,7 +1139,10 @@ function startRevise() {
   if (!s.mistakes.length) return;
   state.mode = "revise";
   state.perQTime = 0; // no per-question timer while revising
-  state.quiz = shuffle([...s.mistakes]).slice(0, 20);
+  const today = todayStr();
+  const due = s.mistakes.filter((m) => !m.due || m.due <= today);
+  const pool = due.length ? due : s.mistakes;
+  state.quiz = shuffle([...pool]).slice(0, 20);
   state.idx = 0;
   state.score = 0;
   state.answers = [];
