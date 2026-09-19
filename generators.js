@@ -429,7 +429,7 @@ const GENERATORS = {
     const table =
       `Shop A → ${items[0]}: ${shopA[0]}, ${items[1]}: ${shopA[1]}, ${items[2]}: ${shopA[2]}. ` +
       `Shop B → ${items[0]}: ${shopB[0]}, ${items[1]}: ${shopB[1]}, ${items[2]}: ${shopB[2]}.`;
-    const type = rnd(1, 3);
+    const type = rnd(1, 5);
     let q, ans, explain, trick;
     if (type === 1) {
       const i = rnd(0, 2);
@@ -449,16 +449,36 @@ const GENERATORS = {
         `${shopA[0]} + ${shopA[1]} + ${shopA[2]} = ${ans}`,
       ];
       trick = `Row total = add every value in that shop's row.`;
-    } else {
+    } else if (type === 3) {
       const i = rnd(0, 2);
       const diff = Math.abs(shopA[i] - shopB[i]);
       ans = diff;
       q = `${table}\nDifference of ${items[i]} sold between Shop A and Shop B?`;
       explain = [
         `Subtract the smaller from the larger for ${items[i]}.`,
-        `|${shopA[i]} − ${shopB[i]}| = ${ans}`,
+        `|${shopA[i]} \u2212 ${shopB[i]}| = ${ans}`,
       ];
-      trick = `"Difference" = bigger value − smaller value in that column.`;
+      trick = `"Difference" = bigger value \u2212 smaller value in that column.`;
+    } else if (type === 4) {
+      const i = rnd(0, 2);
+      ans = (shopA[i] + shopB[i]) / 2;
+      q = `${table}\nAverage number of ${items[i]} sold per shop?`;
+      explain = [
+        `Average = (Shop A + Shop B) \u00f7 2 for ${items[i]}.`,
+        `(${shopA[i]} + ${shopB[i]}) \u00f7 2 = ${shopA[i] + shopB[i]} \u00f7 2 = ${ans}`,
+      ];
+      trick = `Average of two values = add them, then divide by 2.`;
+    } else {
+      const tA = shopA[0] + shopA[1] + shopA[2];
+      const tB = shopB[0] + shopB[1] + shopB[2];
+      ans = tA + tB;
+      q = `${table}\nTotal items sold by both shops together?`;
+      explain = [
+        `Add every value in the table.`,
+        `Shop A total = ${tA}, Shop B total = ${tB}.`,
+        `Grand total = ${tA} + ${tB} = ${ans}`,
+      ];
+      trick = `Grand total = sum of both shops' row totals.`;
     }
     const { options, answer } = makeOptions(ans, [
       ans + rnd(5, 30),
