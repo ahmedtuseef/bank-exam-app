@@ -111,6 +111,24 @@ function showScreen(id) {
   $(id).classList.add("active");
 }
 
+// Share result via the OS share sheet, or copy to clipboard as a fallback.
+function shareText(text) {
+  if (!text) return;
+  if (navigator.share) {
+    navigator.share({ title: "RRB Office Assistant", text }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() =>
+        alert(
+          "Result copied! Ab kahin bhi paste karke share karo. \ud83d\udccb",
+        ),
+      );
+  } else {
+    alert(text);
+  }
+}
+
 // ===== Build topic grid =====
 function buildTopics() {
   const grid = $("topicGrid");
@@ -272,6 +290,7 @@ function renderQuestion() {
   $("feedback").className = "feedback";
   $("nextBtn").disabled = state.mode === "exam" ? false : true;
   $("explainBtn").hidden = true;
+  if ($("askAiBtn")) $("askAiBtn").hidden = true;
   $("explainBox").hidden = true;
   $("explainBox").innerHTML = "";
 
@@ -462,6 +481,7 @@ function finishExam() {
   }
   $("examEmoji").textContent = emoji;
   $("examMsg").textContent = msg;
+  state.lastShare = `\ud83d\udcdd RRB Full Mock: ${marks.toFixed(2)}/${total} \u00b7 ${correct} correct \u00b7 ${attempted} attempted!\nTum bhi try karo: https://prelimspracticerrb.netlify.app`;
 
   // Build review list
   const rev = $("examReview");
@@ -503,6 +523,15 @@ function showExplainButton(q) {
     box.hidden = false;
     box.innerHTML = buildExplanation(q);
   };
+  const ai = $("askAiBtn");
+  if (ai) {
+    ai.hidden = false;
+    ai.onclick = () => {
+      if (typeof window.askSolveSathi === "function") {
+        window.askSolveSathi(`Ye question step by step samjhao:\n\n${q.q}`);
+      }
+    };
+  }
 }
 
 function buildExplanation(q) {
@@ -550,6 +579,7 @@ function showResult() {
   }
   $("resultEmoji").textContent = emoji;
   $("resultMsg").textContent = msg;
+  state.lastShare = `\ud83d\udcca Maine RRB Office Assistant practice mein ${correct}/${total} (${pct}%) score kiya! \ud83c\udfe6\nTum bhi try karo: https://prelimspracticerrb.netlify.app`;
 
   const rev = $("review");
   rev.innerHTML = "";
@@ -721,8 +751,26 @@ function renderStats() {
   $("statAvg").textContent = `${avg}%`;
   $("statStreak").textContent = `${currentStreak()}🔥`;
   const mCount = s.mistakes.length;
-  $("reviseBtn").textContent = `📌 Revise Mistakes (${mCount})`;
+  $("reviseBtn").textContent = `\ud83d\udccc Revise Mistakes (${mCount})`;
   $("reviseBtn").disabled = mCount === 0;
+
+  const chart = $("progressChart");
+  if (chart) {
+    const recent = s.history.slice(-10);
+    if (!recent.length) {
+      chart.className = "progress-chart empty";
+      chart.textContent =
+        "Koi test nahi \u2014 pehla test do, yaha graph dikhega \ud83d\udcca";
+    } else {
+      chart.className = "progress-chart";
+      chart.innerHTML = recent
+        .map(
+          (h) =>
+            `<div class="pbar" style="height:${Math.max(4, h.pct)}%" title="${h.pct}%"><span>${h.pct}</span></div>`,
+        )
+        .join("");
+    }
+  }
 }
 
 // Start a quiz built only from saved mistake questions.
@@ -758,6 +806,10 @@ window.addEventListener("DOMContentLoaded", () => {
   $("backFromExam").onclick = () => showScreen("dashboard");
   $("startExamBtn").onclick = startExam;
   $("examAgainBtn").onclick = () => showScreen("dashboard");
+  if ($("shareResultBtn"))
+    $("shareResultBtn").onclick = () => shareText(state.lastShare);
+  if ($("shareExamBtn"))
+    $("shareExamBtn").onclick = () => shareText(state.lastShare);
 
   $("startBtn").onclick = startQuiz;
   $("selectAllBtn").onclick = () => setAllTopics(true);

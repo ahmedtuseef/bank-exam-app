@@ -84,4 +84,13 @@
       input.focus();
     }
   });
+
+  // Let other parts of the app send a question straight to the tutor.
+  window.askSolveSathi = function (text) {
+    if (!text) return;
+    openPanel();
+    input.value = text;
+    input.style.height = "auto";
+    form.requestSubmit();
+  };
 })();

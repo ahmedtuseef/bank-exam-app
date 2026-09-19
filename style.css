@@ -707,6 +707,38 @@ select:focus {
   color: #fde68a;
 }
 
+/* ================= PROGRESS CHART ================= */
+.progress-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 96px;
+  margin: 18px 0 10px;
+}
+.progress-chart .pbar {
+  flex: 1;
+  min-height: 4px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, var(--primary-2), var(--primary));
+  position: relative;
+}
+.progress-chart .pbar span {
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+.progress-chart.empty {
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
 /* ================= AI TUTOR CHATBOT ================= */
 .chat-fab {
   position: fixed;
