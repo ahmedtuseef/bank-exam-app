@@ -124,9 +124,9 @@ const GENERATORS = {
     let q, ans, sol, explain, trick;
     if (type === 1) {
       const p = rnd(1, 8) * 5,
-        num = rnd(5, 20) * 10;
-      ans = num;
-      const val = Math.round((p / 100) * num);
+        k = rnd(3, 12);
+      ans = 20 * k;
+      const val = (p / 5) * k; // exactly p% of ans, always a whole number
       q = `${p}% of a number is ${val}. Find the number.`;
       sol = `${val} ÷ ${p} × 100 = ${ans}`;
       explain = [
