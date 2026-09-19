@@ -153,6 +153,10 @@ function startQuiz() {
   const count = parseInt($("qCount").value, 10);
   state.perQTime = parseInt($("perQTime").value, 10);
   state.mode = "practice";
+  if (typeof setDifficulty === "function") {
+    const sel = $("difficulty");
+    setDifficulty(sel ? sel.value : "easy");
+  }
 
   const quiz = buildQuiz([...state.selectedTopics], count);
   state.quiz = shuffle(quiz);
@@ -202,6 +206,8 @@ function buildQuiz(topicList, count) {
 // ===== Start full exam (RRB Office Assistant style) =====
 function startExam() {
   state.mode = "exam";
+  // Real exam feel: use the hardest question level.
+  if (typeof setDifficulty === "function") setDifficulty("exam");
   // 40 Numerical + 40 Reasoning = 80 questions, mixed order.
   const numerical = buildQuiz(NUMERICAL_TOPICS, 40);
   const reasoning = buildQuiz(REASONING_TOPICS, 40);

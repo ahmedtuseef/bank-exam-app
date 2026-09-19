@@ -5,6 +5,16 @@
 const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const pick = (arr) => arr[rnd(0, arr.length - 1)];
 
+// ===== Difficulty control =====
+// app.js calls setDifficulty() before building a quiz: "easy" | "medium" | "exam".
+let DIFFICULTY = "easy";
+function setDifficulty(level) {
+  DIFFICULTY = level === "medium" || level === "exam" ? level : "easy";
+}
+// Return a value chosen by the current difficulty.
+const D = (easy, medium, exam) =>
+  DIFFICULTY === "exam" ? exam : DIFFICULTY === "medium" ? medium : easy;
+
 // 4 unique options banata hai, correct answer random position pe.
 function makeOptions(correct, distractors) {
   const set = new Set([String(correct)]);
@@ -32,9 +42,9 @@ function makeOptions(correct, distractors) {
 
 const GENERATORS = {
   Simplification: () => {
-    const a = rnd(2, 20),
-      b = rnd(2, 20),
-      c = rnd(2, 12);
+    const a = rnd(2, D(20, 50, 99)),
+      b = rnd(2, D(20, 40, 60)),
+      c = rnd(2, D(12, 60, 200));
     const type = rnd(1, 3);
     let q, ans, explain, trick;
     if (type === 1) {
@@ -48,7 +58,7 @@ const GENERATORS = {
       trick = `Always multiply first, then add. Multiply in parts if needed: ${a}×${b} = ${a}×10 + ${a}×${b - 10 > 0 ? b - 10 : b}...`;
     } else if (type === 2) {
       const p = rnd(1, 4) * 25;
-      const n = rnd(2, 10) * 20;
+      const n = rnd(2, D(10, 25, 50)) * 20;
       ans = Math.round((p / 100) * n);
       q = `${p}% of ${n} = ?`;
       explain = [
@@ -76,8 +86,8 @@ const GENERATORS = {
   },
 
   "Number Series": () => {
-    const start = rnd(2, 9);
-    const step = pick([2, 3]);
+    const start = rnd(2, D(9, 15, 25));
+    const step = pick(D([2, 3], [2, 3, 4], [3, 4, 5]));
     const type = rnd(1, 2);
     let seq = [start],
       sol,
@@ -95,7 +105,7 @@ const GENERATORS = {
       ];
       trick = `Divide two consecutive terms to spot the ratio. Here each is ${step}× the previous.`;
     } else {
-      let add = rnd(2, 5);
+      let add = rnd(2, D(5, 8, 12));
       const firstAdd = add;
       for (let i = 1; i < 5; i++) {
         seq.push(seq[i - 1] + add);
@@ -124,7 +134,7 @@ const GENERATORS = {
     let q, ans, sol, explain, trick;
     if (type === 1) {
       const p = rnd(1, 8) * 5,
-        k = rnd(3, 12);
+        k = rnd(3, D(12, 30, 60));
       ans = 20 * k;
       const val = (p / 5) * k; // exactly p% of ans, always a whole number
       q = `${p}% of a number is ${val}. Find the number.`;
@@ -136,8 +146,8 @@ const GENERATORS = {
       ];
       trick = `Find 1% by dividing the value by the percent, then ×100 for the whole number.`;
     } else {
-      const n = rnd(3, 6),
-        avg = rnd(10, 40);
+      const n = rnd(3, D(6, 8, 12)),
+        avg = rnd(10, D(40, 80, 150));
       ans = n * avg;
       q = `The average of ${n} numbers is ${avg}. Find their total sum.`;
       sol = `${avg} × ${n} = ${ans}`;
@@ -157,8 +167,8 @@ const GENERATORS = {
   },
 
   "Profit & Loss": () => {
-    const cp = rnd(2, 20) * 50,
-      pct = rnd(1, 5) * 5;
+    const cp = rnd(2, D(20, 40, 80)) * 50,
+      pct = rnd(1, D(5, 8, 12)) * 5;
     const profit = rnd(0, 1) === 1;
     const sp = profit
       ? Math.round(cp * (1 + pct / 100))
@@ -202,9 +212,9 @@ const GENERATORS = {
   },
 
   "SI & CI": () => {
-    const p = rnd(2, 20) * 500,
-      r = rnd(1, 5) * 2,
-      t = rnd(1, 4);
+    const p = rnd(2, D(20, 40, 80)) * 500,
+      r = rnd(1, D(5, 8, 12)) * 2,
+      t = rnd(1, D(4, 6, 10));
     const si = (p * r * t) / 100;
     const q = `Find the SI on ₹${p} at ${r}% per annum for ${t} years.`;
     const { options, answer } = makeOptions(si, [
@@ -227,10 +237,10 @@ const GENERATORS = {
   },
 
   "Ratio & Ages": () => {
-    const x = rnd(2, 6),
-      y = rnd(2, 6);
+    const x = rnd(2, D(6, 9, 15)),
+      y = rnd(2, D(6, 9, 15));
     if (x === y) return GENERATORS["Ratio & Ages"]();
-    const mult = rnd(3, 12);
+    const mult = rnd(3, D(12, 30, 60));
     const total = (x + y) * mult;
     const big = Math.max(x, y);
     const bigPart = big * mult;
@@ -255,8 +265,8 @@ const GENERATORS = {
   },
 
   "Speed & Time": () => {
-    const speed = rnd(4, 12) * 10,
-      time = rnd(2, 6);
+    const speed = rnd(4, D(12, 20, 40)) * 10,
+      time = rnd(2, D(6, 9, 14));
     const dist = speed * time;
     const type = rnd(1, 2);
     let q, ans, sol, explain, trick;
@@ -290,8 +300,8 @@ const GENERATORS = {
   },
 
   "Time & Work": () => {
-    const men = rnd(3, 10) * 2,
-      days = rnd(2, 12);
+    const men = rnd(3, D(10, 20, 40)) * 2,
+      days = rnd(2, D(12, 24, 40));
     const total = men * days;
     const newMen = men / 2;
     const newDays = total / newMen;
@@ -329,7 +339,7 @@ const GENERATORS = {
       "BUS",
     ];
     const w = pick(words);
-    const shift = rnd(1, 3);
+    const shift = rnd(1, D(3, 5, 9));
     const code = (word, s) =>
       word
         .split("")
@@ -392,8 +402,8 @@ const GENERATORS = {
   "Data Interpretation": () => {
     // Small table: sales of 3 items across 2 shops, ask a computed question.
     const items = ["Pens", "Books", "Bags"];
-    const shopA = items.map(() => rnd(2, 20) * 10);
-    const shopB = items.map(() => rnd(2, 20) * 10);
+    const shopA = items.map(() => rnd(2, D(20, 40, 80)) * 10);
+    const shopB = items.map(() => rnd(2, D(20, 40, 80)) * 10);
     const table =
       `Shop A → ${items[0]}: ${shopA[0]}, ${items[1]}: ${shopA[1]}, ${items[2]}: ${shopA[2]}. ` +
       `Shop B → ${items[0]}: ${shopB[0]}, ${items[1]}: ${shopB[1]}, ${items[2]}: ${shopB[2]}.`;
