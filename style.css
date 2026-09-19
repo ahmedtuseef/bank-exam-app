@@ -786,6 +786,12 @@ select:focus {
   font-size: 13px;
   text-align: center;
 }
+.goal-row {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
 
 /* ================= AI TUTOR CHATBOT ================= */
 .chat-fab {

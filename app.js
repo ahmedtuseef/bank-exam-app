@@ -44,6 +44,7 @@ function loadStore() {
     s.mistakes = s.mistakes || [];
     s.streakDates = s.streakDates || [];
     s.bookmarks = s.bookmarks || [];
+    s.daily = s.daily || { date: todayStr(), count: 0 };
     return s;
   } catch {
     return { history: [], mistakes: [], streakDates: [], bookmarks: [] };
@@ -51,6 +52,14 @@ function loadStore() {
 }
 function saveStore(s) {
   localStorage.setItem(STORE_KEY, JSON.stringify(s));
+}
+// Count questions solved today toward the daily goal (resets each day).
+function bumpDaily(n) {
+  const s = loadStore();
+  const today = todayStr();
+  if (!s.daily || s.daily.date !== today) s.daily = { date: today, count: 0 };
+  s.daily.count += n;
+  saveStore(s);
 }
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -557,6 +566,7 @@ function finishExam() {
     (q, i) => state.answers[i] && !state.answers[i].ok,
   );
   addMistakes(wrongQs);
+  bumpDaily(attempted);
   renderStats();
 
   showScreen("examResult");
@@ -653,6 +663,7 @@ function showResult() {
     );
     addMistakes(wrongQs);
   }
+  bumpDaily(state.answers.filter(Boolean).length);
   renderStats();
 }
 
@@ -795,6 +806,16 @@ function renderFormulas() {
 // ===== Dashboard stats + Revise Mistakes =====
 function renderStats() {
   const s = loadStore();
+  const goal = 20;
+  const dCount = s.daily && s.daily.date === todayStr() ? s.daily.count : 0;
+  if ($("goalText")) {
+    $("goalText").textContent =
+      dCount >= goal
+        ? `\u2705 Aaj ka goal poora! (${dCount}/${goal})`
+        : `\ud83c\udfaf Aaj ka Goal: ${dCount}/${goal} questions`;
+  }
+  if ($("goalBar"))
+    $("goalBar").style.width = `${Math.min(100, (dCount / goal) * 100)}%`;
   const tests = s.history.length;
   const best = tests ? Math.max(...s.history.map((h) => h.pct)) : 0;
   const avg = tests
