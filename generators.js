@@ -15,6 +15,28 @@ function setDifficulty(level) {
 const D = (easy, medium, exam) =>
   DIFFICULTY === "exam" ? exam : DIFFICULTY === "medium" ? medium : easy;
 
+// Shared name pool + distinct picker for reasoning questions.
+const NAMES = [
+  "Ravi",
+  "Sita",
+  "Mohan",
+  "Anil",
+  "Priya",
+  "Karan",
+  "Neha",
+  "Raj",
+  "Meena",
+  "Arjun",
+];
+function pickDistinct(pool, n) {
+  const copy = [...pool];
+  const out = [];
+  while (out.length < n && copy.length) {
+    out.push(copy.splice(rnd(0, copy.length - 1), 1)[0]);
+  }
+  return out;
+}
+
 // 4 unique options banata hai, correct answer random position pe.
 function makeOptions(correct, distractors) {
   const set = new Set([String(correct)]);
@@ -444,5 +466,104 @@ const GENERATORS = {
       ans + rnd(31, 60),
     ]);
     return { q, options, answer, sol: `= ${ans}`, explain, trick };
+  },
+
+  "Blood Relation": () => {
+    const [a, b, c] = pickDistinct(NAMES, 3);
+    const chains = [
+      { r1: "father", r2: "father", ans: "grandfather" },
+      { r1: "mother", r2: "mother", ans: "grandmother" },
+      { r1: "brother", r2: "father", ans: "uncle" },
+      { r1: "sister", r2: "mother", ans: "aunt" },
+      { r1: "father", r2: "sister", ans: "father" },
+      { r1: "father", r2: "brother", ans: "father" },
+      { r1: "son", r2: "brother", ans: "nephew" },
+    ];
+    const ch = pick(chains);
+    const q = `${a} is the ${ch.r1} of ${b}. ${b} is the ${ch.r2} of ${c}. How is ${a} related to ${c}?`;
+    const pool = [
+      "grandfather",
+      "grandmother",
+      "uncle",
+      "aunt",
+      "father",
+      "mother",
+      "nephew",
+      "brother",
+      "cousin",
+    ];
+    const distract = pickDistinct(
+      pool.filter((r) => r !== ch.ans),
+      3,
+    );
+    const { options, answer } = makeOptions(ch.ans, distract);
+    return {
+      q,
+      options,
+      answer,
+      sol: `${a} \u2192 ${b} \u2192 ${c} \u21d2 ${ch.ans}`,
+      explain: [
+        `${a} is ${b}'s ${ch.r1}, and ${b} is ${c}'s ${ch.r2}.`,
+        `Trace the family chain: ${a} \u2192 ${b} \u2192 ${c}.`,
+        `So ${a} is the ${ch.ans} of ${c}.`,
+      ],
+      trick: `Draw a quick family tree. Place each person one step at a time and read the final link.`,
+    };
+  },
+
+  "Inequality & Order": () => {
+    const [name] = pickDistinct(NAMES, 1);
+    const n = rnd(8, D(12, 22, 38));
+    const k = rnd(2, n - 1);
+    const ans = n - k + 1;
+    const q = `In a row of ${n} students, ${name} is ${k}th from the left. What is ${name}'s position from the right?`;
+    const { options, answer } = makeOptions(ans, [
+      ans + rnd(1, 3),
+      ans - rnd(1, 3) > 0 ? ans - rnd(1, 3) : ans + 4,
+      n - k,
+    ]);
+    return {
+      q,
+      options,
+      answer,
+      sol: `${n} \u2212 ${k} + 1 = ${ans}`,
+      explain: [
+        `Total students = ${n}, position from left = ${k}.`,
+        `Position from right = Total \u2212 left + 1.`,
+        `= ${n} \u2212 ${k} + 1 = ${ans}`,
+      ],
+      trick: `Position from right = Total \u2212 left position + 1. The +1 counts the person themselves.`,
+    };
+  },
+
+  "Odd One & Series": () => {
+    const m = pick([3, 4, 6, 7, 8, 9, 11]);
+    const mults = [];
+    while (mults.length < 3) {
+      const v = m * rnd(2, D(9, 15, 25));
+      if (!mults.includes(v)) mults.push(v);
+    }
+    let odd;
+    do {
+      odd = pick(mults) + rnd(1, m - 1);
+    } while (mults.includes(odd) || odd % m === 0);
+    const shown = [...mults, odd].sort(() => Math.random() - 0.5);
+    const q = `Find the odd one out: ${shown.join(", ")}`;
+    const { options, answer } = makeOptions(
+      String(odd),
+      mults.map(String),
+    );
+    return {
+      q,
+      options,
+      answer,
+      sol: `${odd} is not a multiple of ${m}`,
+      explain: [
+        `Look for a common pattern in the numbers.`,
+        `${mults.join(", ")} are all multiples of ${m}.`,
+        `${odd} is NOT a multiple of ${m}, so it is the odd one.`,
+      ],
+      trick: `Test divisibility by small numbers. The one that breaks the shared pattern is the answer.`,
+    };
   },
 };
