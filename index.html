@@ -22,6 +22,13 @@
         <h1>🏦 RRB Office Assistant</h1>
         <p>Prep companion · Maths + Reasoning</p>
       </header>
+
+      <div class="card" id="authCard">
+        <h2>☁️ Cloud Sync</h2>
+        <p class="hint" id="authStatus">Login karo taaki progress har device par safe rahe.</p>
+        <button id="loginBtn" class="btn primary">🔑 Login / Sign Up</button>
+        <button id="logoutBtn" class="btn ghost" hidden>Logout</button>
+      </div>
       <div class="dash-grid">
         <button id="goPractice" class="dash-card">
           <span class="dash-emoji">📚</span>
@@ -298,6 +305,20 @@
     </section>
   </div>
 
+  <!-- ================= CLOUD LOGIN MODAL ================= -->
+  <div id="authModal" class="auth-modal" hidden>
+    <div class="auth-box">
+      <button id="authClose" class="chat-close" aria-label="Close">✕</button>
+      <h3>☁️ Cloud Login</h3>
+      <p class="hint">Account banao ya login karo — progress har device par sync hogi.</p>
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="authPass" type="password" placeholder="Password (min 6 chars)" autocomplete="current-password" />
+      <div id="authMsg" class="auth-msg"></div>
+      <button id="signInBtn" class="btn primary">Sign In</button>
+      <button id="signUpBtn" class="btn ghost">Create New Account</button>
+    </div>
+  </div>
+
   <!-- ================= AI TUTOR CHATBOT ================= -->
   <button id="chatFab" class="chat-fab" title="Solve Sathi — Ask your doubt" aria-label="Solve Sathi chat">💬</button>
   <div id="chatPanel" class="chat-panel" hidden>
@@ -314,10 +335,12 @@
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="questions.js"></script>
   <script src="generators.js"></script>
   <script src="app.js"></script>
   <script src="chat.js"></script>
+  <script src="cloud.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

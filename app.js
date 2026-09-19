@@ -58,6 +58,7 @@ function loadStore() {
 }
 function saveStore(s) {
   localStorage.setItem(STORE_KEY, JSON.stringify(s));
+  if (typeof window !== "undefined" && window.cloudSync) window.cloudSync();
 }
 // Count questions solved today toward the daily goal (resets each day).
 function bumpDaily(n) {

@@ -1,5 +1,5 @@
 // Simple offline cache for the RRB Prep app.
-const CACHE = "rrb-prep-v2";
+const CACHE = "rrb-prep-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const ASSETS = [
   "./generators.js",
   "./app.js",
   "./chat.js",
+  "./cloud.js",
   "./manifest.json",
   "./icon.svg",
 ];
